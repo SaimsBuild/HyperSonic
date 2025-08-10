@@ -122,11 +122,11 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
             <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getUTCMonth()]}</span>
           </div>
           <div className="text-xs text-muted mt-1">
-            Bangladesh Date: {getBangladeshDate().toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
+            Bangladesh Date: {(() => {
+              const bdDate = getBangladeshDate();
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${months[bdDate.getUTCMonth()]} ${bdDate.getUTCDate()}, ${bdDate.getUTCFullYear()}`;
+            })()}
           </div>
         </div>
         <div className="flex items-center space-x-2">

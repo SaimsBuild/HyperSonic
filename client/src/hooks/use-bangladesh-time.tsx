@@ -36,18 +36,19 @@ export function useBangladeshTime() {
   const updateTimeDisplay = () => {
     const now = getBangladeshTime();
     
-    setCurrentTime(now.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    }));
+    // Format time manually using UTC methods since we've adjusted to Bangladesh time
+    const hours = now.getUTCHours();
+    const minutes = now.getUTCMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
     
-    setCurrentDate(now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long', 
-      day: 'numeric'
-    }));
+    setCurrentTime(`${displayHours}:${String(minutes).padStart(2, '0')} ${ampm}`);
+    
+    // Format date manually 
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    setCurrentDate(`${weekdays[now.getUTCDay()]}, ${months[now.getUTCMonth()]} ${now.getUTCDate()}, ${now.getUTCFullYear()}`);
   };
 
   useEffect(() => {
