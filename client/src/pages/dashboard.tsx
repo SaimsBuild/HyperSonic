@@ -47,8 +47,8 @@ export default function Dashboard() {
     // Check immediately
     checkDailyReset();
     
-    // Check every minute for date change (especially around midnight)
-    const interval = setInterval(checkDailyReset, 60000);
+    // Check every second for precise date change detection at midnight
+    const interval = setInterval(checkDailyReset, 1000);
     
     return () => clearInterval(interval);
   }, [getTodayDateString, appData.lastResetDate, appData.dailyGoals, setAppData]);

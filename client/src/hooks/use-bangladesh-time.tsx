@@ -54,8 +54,8 @@ export function useBangladeshTime() {
   useEffect(() => {
     updateTimeDisplay();
     
-    // Update time every minute
-    const interval = setInterval(updateTimeDisplay, 60000);
+    // Update time every second for precise timing around midnight
+    const interval = setInterval(updateTimeDisplay, 1000);
     
     return () => clearInterval(interval);
   }, []);

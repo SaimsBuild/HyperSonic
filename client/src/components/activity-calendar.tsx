@@ -38,7 +38,7 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       }
     };
 
-    const interval = setInterval(updateCalendar, 60000); // Check every minute
+    const interval = setInterval(updateCalendar, 1000); // Check every second for immediate day transition
     return () => clearInterval(interval);
   }, [currentDate, getBangladeshDate]);
 
