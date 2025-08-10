@@ -86,7 +86,12 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
       
-      const dateStr = date.toISOString().split('T')[0];
+      // Format date consistently with getTodayDateString() method
+      const year = date.getFullYear();
+      const month_num = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month_num}-${day}`;
+      
       const isCurrentMonth = date.getMonth() === month;
       const isToday = dateStr === today;
       const activity = activityLog[dateStr];
@@ -96,6 +101,11 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
         console.log('Found today in calendar:', dateStr, 'matches', today);
       }
       
+      // Debug: log any activity data
+      if (activity) {
+        console.log(`Activity found for ${dateStr}:`, activity);
+      }
+      
       let activityClass = '';
       if (activity) {
         if (activity.level === 3) activityClass = 'high-activity';
@@ -103,12 +113,19 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
         else if (activity.level === 1) activityClass = 'low-activity';
       }
       
+      // Debug: log the classes being applied
+      const finalClasses = `calendar-day text-sm text-white ${
+        isCurrentMonth ? '' : 'opacity-50'
+      } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`;
+      
+      if (date.getDate() === 10 || date.getDate() === 11) {
+        console.log(`Date ${date.getDate()}: dateStr="${dateStr}", today="${today}", isToday=${isToday}, activity=${activity?.level || 'none'}`);
+      }
+      
       days.push(
         <div
           key={dateStr}
-          className={`calendar-day text-sm text-white ${
-            isCurrentMonth ? '' : 'opacity-50'
-          } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`}
+          className={finalClasses}
         >
           {date.getDate()}
         </div>
