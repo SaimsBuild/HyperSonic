@@ -7,7 +7,7 @@ import { DailyGoals } from '@/components/daily-goals';
 import { HabitTracker } from '@/components/habit-tracker';
 import { ActivityCalendar } from '@/components/activity-calendar';
 import { UrgeBreaker } from '@/components/urge-breaker';
-import { Zap } from 'lucide-react';
+import { Zap, RotateCcw } from 'lucide-react';
 
 const initialAppData: AppData = {
   dailyGoals: [],
@@ -17,28 +17,40 @@ const initialAppData: AppData = {
 };
 
 export default function Dashboard() {
-  const { currentTime, currentDate, getTodayDateString } = useBangladeshTime();
+  const { currentTime, currentDate, getTodayDateString, getTimeUntilMidnight } = useBangladeshTime();
   const [appData, setAppData] = useLocalStorage<AppData>('hypersonic-data', initialAppData);
   const [showUrgeBreaker, setShowUrgeBreaker] = useState(false);
 
   // Check for daily reset at midnight Bangladesh time
   useEffect(() => {
-    const today = getTodayDateString();
-    
-    if (appData.lastResetDate !== today) {
-      // Reset daily goals
-      const resetGoals = appData.dailyGoals.map(goal => ({
-        ...goal,
-        completed: false
-      }));
+    const checkDailyReset = () => {
+      const today = getTodayDateString();
       
-      setAppData(prev => ({
-        ...prev,
-        dailyGoals: resetGoals,
-        lastResetDate: today
-      }));
-    }
-  }, [getTodayDateString, appData.lastResetDate, setAppData]);
+      if (appData.lastResetDate !== today) {
+        console.log(`Daily reset triggered: ${appData.lastResetDate} -> ${today}`);
+        
+        // Reset daily goals by clearing completed status
+        const resetGoals = appData.dailyGoals.map(goal => ({
+          ...goal,
+          completed: false
+        }));
+        
+        setAppData(prev => ({
+          ...prev,
+          dailyGoals: resetGoals,
+          lastResetDate: today
+        }));
+      }
+    };
+
+    // Check immediately
+    checkDailyReset();
+    
+    // Check every minute for date change (especially around midnight)
+    const interval = setInterval(checkDailyReset, 60000);
+    
+    return () => clearInterval(interval);
+  }, [getTodayDateString, appData.lastResetDate, appData.dailyGoals, setAppData]);
 
   // Calculate progress
   const calculateProgress = () => {
@@ -127,7 +139,33 @@ export default function Dashboard() {
             <div className="text-right">
               <div className="text-lg font-semibold text-white">{currentTime}</div>
               <div className="text-sm text-muted">{currentDate}</div>
+              <div className="text-xs text-accent mt-1">
+                {(() => {
+                  const { hours, minutes } = getTimeUntilMidnight();
+                  return `Reset in: ${hours}h ${minutes}m`;
+                })()}
+              </div>
             </div>
+            <button
+              onClick={() => {
+                // Manual reset for testing
+                const today = getTodayDateString();
+                const resetGoals = appData.dailyGoals.map(goal => ({
+                  ...goal,
+                  completed: false
+                }));
+                setAppData(prev => ({
+                  ...prev,
+                  dailyGoals: resetGoals,
+                  lastResetDate: today
+                }));
+                console.log('Manual reset triggered');
+              }}
+              className="p-2 text-muted hover:text-accent transition-colors"
+              title="Test Reset Goals"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
             <div className="w-2 h-2 bg-secondary rounded-full animate-pulse"></div>
           </div>
         </div>

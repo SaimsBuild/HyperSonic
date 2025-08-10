@@ -5,11 +5,33 @@ export function useBangladeshTime() {
   const [currentDate, setCurrentDate] = useState('');
 
   const getBangladeshTime = () => {
-    return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    // Get current UTC time
+    const now = new Date();
+    // Convert to Bangladesh time (UTC+6)
+    const bangladeshTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    return bangladeshTime;
   };
 
   const getTodayDateString = () => {
-    return getBangladeshTime().toISOString().split('T')[0];
+    const bangladeshTime = getBangladeshTime();
+    // Format as YYYY-MM-DD in Bangladesh timezone
+    const year = bangladeshTime.getFullYear();
+    const month = String(bangladeshTime.getMonth() + 1).padStart(2, '0');
+    const day = String(bangladeshTime.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getTimeUntilMidnight = () => {
+    const now = getBangladeshTime();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    
+    const timeDiff = tomorrow.getTime() - now.getTime();
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return { hours, minutes };
   };
 
   const updateTimeDisplay = () => {
@@ -45,5 +67,6 @@ export function useBangladeshTime() {
     currentDate,
     getBangladeshTime,
     getTodayDateString,
+    getTimeUntilMidnight,
   };
 }
