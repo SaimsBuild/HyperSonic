@@ -1,0 +1,10 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5000
+  },
+  "app": {
+    "name": "Hypersonic Habit Tracker",
+    "description": "A web-based self-discipline and habit tracker with Bangladesh timezone integration"
+  }
+}

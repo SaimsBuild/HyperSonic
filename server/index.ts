@@ -1,6 +1,27 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { readFileSync } from "fs";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
+// Load configuration
+let config;
+try {
+  const configData = readFileSync('./config.json', 'utf8');
+  config = JSON.parse(configData);
+} catch (error) {
+  // Fallback configuration if config.json doesn't exist or is invalid
+  config = {
+    server: {
+      host: "0.0.0.0",
+      port: 5000
+    },
+    app: {
+      name: "Hypersonic Habit Tracker",
+      description: "A web-based self-discipline and habit tracker with Bangladesh timezone integration"
+    }
+  };
+  log("Warning: Could not load config.json, using default configuration");
+}
 
 const app = express();
 app.use(express.json());
@@ -56,16 +77,16 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
+  // Use configuration for host and port, with environment variable override
+  const port = parseInt(process.env.PORT || config.server.port.toString(), 10);
+  const host = config.server.host;
+  
   server.listen({
     port,
-    host: "0.0.0.0",
+    host,
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`${config.app.name} serving on ${host}:${port}`);
+    log(`App description: ${config.app.description}`);
   });
 })();
