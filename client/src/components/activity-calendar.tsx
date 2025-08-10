@@ -98,8 +98,8 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       days.push(
         <div
           key={dateStr}
-          className={`calendar-day text-sm ${
-            isCurrentMonth ? '' : 'text-muted opacity-50'
+          className={`calendar-day text-sm text-white ${
+            isCurrentMonth ? '' : 'opacity-50'
           } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`}
         >
           {date.getDate()}
@@ -116,12 +116,12 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
     <div className="bg-surface rounded-xl p-6 border border-slate-700">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold">Activity Calendar</h2>
+          <h2 className="text-lg font-semibold text-white">Activity Calendar</h2>
           <div className="flex items-center mt-1 text-sm text-accent">
             <Calendar className="w-4 h-4 mr-1" />
             <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getUTCMonth()]}</span>
           </div>
-          <div className="text-xs text-muted mt-1">
+          <div className="text-xs text-white mt-1">
             Bangladesh Date: {(() => {
               const bdDate = getBangladeshDate();
               const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

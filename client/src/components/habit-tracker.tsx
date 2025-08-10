@@ -57,7 +57,7 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, onRemoveHabi
     <>
       <div className="bg-surface rounded-xl p-6 border border-slate-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Active Habits</h2>
+          <h2 className="text-lg font-semibold text-white">Active Habits</h2>
           <Button
             onClick={() => setShowAddModal(true)}
             className="bg-primary hover:bg-blue-600 text-white"
@@ -75,7 +75,7 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, onRemoveHabi
             return (
               <div key={habit.id} className={`habit-card rounded-lg p-4 ${is21DayStreak ? 'habit-mastery' : ''}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-medium text-sm flex items-center">
+                  <h3 className="font-medium text-sm flex items-center text-white">
                     {habit.name}
                     {is21DayStreak && (
                       <Crown className="w-4 h-4 ml-2 text-yellow-400 animate-pulse" />
@@ -99,14 +99,14 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, onRemoveHabi
                     ) : (
                       <button
                         onClick={() => onCompleteHabit(habit.id)}
-                        className="text-muted hover:text-white transition-colors"
+                        className="text-white hover:text-accent transition-colors"
                       >
                         <Circle className="w-5 h-5" />
                       </button>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted">
+                <div className="flex items-center justify-between text-xs text-white">
                   <span className="flex items-center">
                     <Flame className={`w-3 h-3 mr-1 ${is21DayStreak ? 'text-yellow-400' : 'text-accent'}`} />
                     <span className={is21DayStreak ? 'text-yellow-400 font-semibold' : ''}>
@@ -124,7 +124,7 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, onRemoveHabi
         </div>
         
         {habits.length === 0 && (
-          <div className="text-center py-8 text-muted">
+          <div className="text-center py-8 text-white">
             <p>No habits yet. Create your first habit to get started!</p>
           </div>
         )}

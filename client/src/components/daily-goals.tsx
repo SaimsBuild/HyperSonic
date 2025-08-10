@@ -35,8 +35,8 @@ export function DailyGoals({ goals, onToggleGoal, onAddGoal, completedGoals, tot
     <>
       <div className="bg-surface rounded-xl p-6 border border-slate-700">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Daily Goals</h2>
-          <div className="text-sm text-muted">
+          <h2 className="text-lg font-semibold text-white">Daily Goals</h2>
+          <div className="text-sm text-white">
             {completedGoals}/{totalGoals} completed
           </div>
         </div>
@@ -54,10 +54,10 @@ export function DailyGoals({ goals, onToggleGoal, onAddGoal, completedGoals, tot
                 {goal.completed ? (
                   <Check className="text-secondary text-lg" />
                 ) : (
-                  <Circle className="text-muted text-lg" />
+                  <Circle className="text-white text-lg" />
                 )}
               </div>
-              <span className="flex-1 text-sm">{goal.text}</span>
+              <span className="flex-1 text-sm text-white">{goal.text}</span>
             </div>
           ))}
         </div>
