@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, Dumbbell, Snowflake, Headphones, TreePine, Book, Music } from 'lucide-react';
+import { X, Dumbbell, Snowflake, Headphones, TreePine, Book, Music, Shuffle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const urgeTasks = [
@@ -20,6 +21,15 @@ interface UrgeBreakerProps {
 
 export function UrgeBreaker({ isOpen, onClose, onCompleteTask }: UrgeBreakerProps) {
   const { toast } = useToast();
+  const [randomTasks, setRandomTasks] = useState<typeof urgeTasks>([]);
+
+  // Generate random selection of tasks when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const shuffled = [...urgeTasks].sort(() => Math.random() - 0.5);
+      setRandomTasks(shuffled.slice(0, 4)); // Show 4 random tasks
+    }
+  }, [isOpen]);
 
   const handleCompleteTask = (task: typeof urgeTasks[0]) => {
     onCompleteTask(task.text);
@@ -30,9 +40,14 @@ export function UrgeBreaker({ isOpen, onClose, onCompleteTask }: UrgeBreakerProp
     });
   };
 
+  const shuffleTasks = () => {
+    const shuffled = [...urgeTasks].sort(() => Math.random() - 0.5);
+    setRandomTasks(shuffled.slice(0, 4));
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-surface border-slate-700 max-w-md">
+      <DialogContent className="bg-surface border-slate-700 max-w-md" aria-describedby="urge-breaker-description">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>Urge Breaker</DialogTitle>
@@ -46,11 +61,23 @@ export function UrgeBreaker({ isOpen, onClose, onCompleteTask }: UrgeBreakerProp
             </Button>
           </div>
         </DialogHeader>
+        <p id="urge-breaker-description" className="sr-only">Select a healthy activity to redirect your energy and overcome urges. Tasks are randomly selected to provide variety.</p>
         
-        <p className="text-muted mb-6">Choose a task to redirect your energy:</p>
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-muted">Choose a task to redirect your energy:</p>
+          <Button
+            onClick={shuffleTasks}
+            variant="ghost"
+            size="sm"
+            className="text-accent hover:text-yellow-400"
+          >
+            <Shuffle className="w-4 h-4 mr-1" />
+            Shuffle
+          </Button>
+        </div>
         
         <div className="space-y-3">
-          {urgeTasks.map((task) => {
+          {randomTasks.map((task) => {
             const IconComponent = task.icon;
             return (
               <button

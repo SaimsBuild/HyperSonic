@@ -1,21 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Habit } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Check, Circle, Flame, Trophy } from 'lucide-react';
+import { Plus, Check, Circle, Flame, Trophy, Crown, Star } from 'lucide-react';
 
 interface HabitTrackerProps {
   habits: Habit[];
   onCompleteHabit: (habitId: string) => void;
   onAddHabit: (name: string, daysToFail: number) => void;
+  onRemoveHabit: (habitId: string) => void;
   getTodayDateString: () => string;
 }
 
-export function HabitTracker({ habits, onCompleteHabit, onAddHabit, getTodayDateString }: HabitTrackerProps) {
+export function HabitTracker({ habits, onCompleteHabit, onAddHabit, onRemoveHabit, getTodayDateString }: HabitTrackerProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [habitName, setHabitName] = useState('');
   const [daysToFail, setDaysToFail] = useState(3);
+
+  // Check for failed habits and remove them automatically
+  useEffect(() => {
+    const today = getTodayDateString();
+    const todayDate = new Date(today);
+    
+    habits.forEach(habit => {
+      if (habit.lastCompleted) {
+        const lastCompletedDate = new Date(habit.lastCompleted);
+        const daysDifference = Math.floor((todayDate.getTime() - lastCompletedDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Remove habit if not completed for 3 consecutive days
+        if (daysDifference >= 3 && habit.status === 'active') {
+          onRemoveHabit(habit.id);
+        }
+      } else {
+        // If habit was never completed and created more than 3 days ago
+        const createdDate = new Date(habit.createdAt);
+        const daysSinceCreated = Math.floor((todayDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysSinceCreated >= 3) {
+          onRemoveHabit(habit.id);
+        }
+      }
+    });
+  }, [habits, getTodayDateString, onRemoveHabit]);
 
   const handleAddHabit = () => {
     if (habitName.trim()) {
@@ -43,15 +70,29 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, getTodayDate
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {habits.map(habit => {
             const isCompletedToday = habit.lastCompleted === getTodayDateString();
+            const is21DayStreak = habit.streak >= 21;
             
             return (
-              <div key={habit.id} className="habit-card rounded-lg p-4">
+              <div key={habit.id} className={`habit-card rounded-lg p-4 ${is21DayStreak ? 'habit-mastery' : ''}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-medium text-sm">{habit.name}</h3>
+                  <h3 className="font-medium text-sm flex items-center">
+                    {habit.name}
+                    {is21DayStreak && (
+                      <Crown className="w-4 h-4 ml-2 text-yellow-400 animate-pulse" />
+                    )}
+                  </h3>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs bg-accent text-black px-2 py-1 rounded-full flex items-center">
-                      <Trophy className="w-3 h-3 mr-1" />
-                      Level {habit.level}
+                    <span className={`text-xs px-2 py-1 rounded-full flex items-center ${
+                      is21DayStreak 
+                        ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-semibold' 
+                        : 'bg-accent text-black'
+                    }`}>
+                      {is21DayStreak ? (
+                        <Star className="w-3 h-3 mr-1" />
+                      ) : (
+                        <Trophy className="w-3 h-3 mr-1" />
+                      )}
+                      {is21DayStreak ? 'Master' : `Level ${habit.level}`}
                     </span>
                     {isCompletedToday ? (
                       <Check className="text-secondary w-5 h-5" />
@@ -67,8 +108,13 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, getTodayDate
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted">
                   <span className="flex items-center">
-                    <Flame className="w-3 h-3 mr-1 text-accent" />
-                    {habit.streak} day streak
+                    <Flame className={`w-3 h-3 mr-1 ${is21DayStreak ? 'text-yellow-400' : 'text-accent'}`} />
+                    <span className={is21DayStreak ? 'text-yellow-400 font-semibold' : ''}>
+                      {habit.streak} day streak
+                    </span>
+                    {is21DayStreak && (
+                      <span className="ml-2 text-yellow-400 font-bold">🏆</span>
+                    )}
                   </span>
                   <span>{habit.status}</span>
                 </div>
@@ -85,10 +131,11 @@ export function HabitTracker({ habits, onCompleteHabit, onAddHabit, getTodayDate
       </div>
 
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="bg-surface border-slate-700">
+        <DialogContent className="bg-surface border-slate-700" aria-describedby="add-habit-description">
           <DialogHeader>
             <DialogTitle>Create New Habit</DialogTitle>
           </DialogHeader>
+          <p id="add-habit-description" className="sr-only">Create a new habit that you want to track daily. Set the number of days after which the habit will be automatically removed if not maintained.</p>
           <div className="space-y-4">
             <Input
               placeholder="Habit name (e.g., Read 10 pages)"

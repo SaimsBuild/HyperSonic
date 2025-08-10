@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ActivityLogEntry } from '@shared/schema';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ActivityCalendarProps {
@@ -9,7 +9,12 @@ interface ActivityCalendarProps {
 }
 
 export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // Use Bangladesh time for calendar display
+  const getBangladeshDate = () => {
+    return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+  };
+  
+  const [currentDate, setCurrentDate] = useState(getBangladeshDate());
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -19,11 +24,21 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const previousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    setCurrentDate(newDate);
   };
 
   const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    setCurrentDate(newDate);
+  };
+
+  // Calculate days remaining in current month
+  const getDaysRemainingInMonth = () => {
+    const now = getBangladeshDate();
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const daysRemaining = lastDayOfMonth.getDate() - now.getDate();
+    return daysRemaining;
   };
 
   const renderCalendar = () => {
@@ -69,10 +84,18 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
     return days;
   };
 
+  const daysRemaining = getDaysRemainingInMonth();
+
   return (
     <div className="bg-surface rounded-xl p-6 border border-slate-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold">Activity Calendar</h2>
+        <div>
+          <h2 className="text-lg font-semibold">Activity Calendar</h2>
+          <div className="flex items-center mt-1 text-sm text-accent">
+            <Calendar className="w-4 h-4 mr-1" />
+            <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getMonth()]}</span>
+          </div>
+        </div>
         <div className="flex items-center space-x-2">
           <Button
             onClick={previousMonth}

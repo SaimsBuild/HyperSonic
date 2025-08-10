@@ -72,10 +72,11 @@ export function DailyGoals({ goals, onToggleGoal, onAddGoal, completedGoals, tot
       </div>
 
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="bg-surface border-slate-700">
+        <DialogContent className="bg-surface border-slate-700" aria-describedby="add-goal-description">
           <DialogHeader>
             <DialogTitle>Add Daily Goal</DialogTitle>
           </DialogHeader>
+          <p id="add-goal-description" className="sr-only">Enter a new daily goal that you want to track and complete today.</p>
           <div className="space-y-4">
             <Input
               placeholder="Enter your goal..."

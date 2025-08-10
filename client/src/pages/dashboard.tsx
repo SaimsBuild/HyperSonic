@@ -219,6 +219,10 @@ export default function Dashboard() {
                 };
                 setAppData(prev => ({ ...prev, habits: [...prev.habits, newHabit] }));
               }}
+              onRemoveHabit={(habitId) => {
+                const updatedHabits = appData.habits.filter(habit => habit.id !== habitId);
+                setAppData(prev => ({ ...prev, habits: updatedHabits }));
+              }}
               getTodayDateString={getTodayDateString}
             />
 
