@@ -28,6 +28,7 @@ export default function Dashboard() {
       
       if (appData.lastResetDate !== today) {
         console.log(`Daily reset triggered: ${appData.lastResetDate} -> ${today}`);
+        console.log(`Resetting ${appData.dailyGoals.length} goals and making habit tick marks available again`);
         
         // Reset daily goals by clearing completed status
         const resetGoals = appData.dailyGoals.map(goal => ({
