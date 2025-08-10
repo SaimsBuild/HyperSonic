@@ -5,27 +5,26 @@ export function useBangladeshTime() {
   const [currentDate, setCurrentDate] = useState('');
 
   const getBangladeshTime = () => {
-    // Get current UTC time
+    // Get current UTC time and add 6 hours for Bangladesh time (UTC+6)
     const now = new Date();
-    // Convert to Bangladesh time (UTC+6)
-    const bangladeshTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
     return bangladeshTime;
   };
 
   const getTodayDateString = () => {
     const bangladeshTime = getBangladeshTime();
     // Format as YYYY-MM-DD in Bangladesh timezone
-    const year = bangladeshTime.getFullYear();
-    const month = String(bangladeshTime.getMonth() + 1).padStart(2, '0');
-    const day = String(bangladeshTime.getDate()).padStart(2, '0');
+    const year = bangladeshTime.getUTCFullYear();
+    const month = String(bangladeshTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(bangladeshTime.getUTCDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
   const getTimeUntilMidnight = () => {
     const now = getBangladeshTime();
     const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    tomorrow.setUTCHours(0, 0, 0, 0);
     
     const timeDiff = tomorrow.getTime() - now.getTime();
     const hours = Math.floor(timeDiff / (1000 * 60 * 60));
@@ -40,16 +39,14 @@ export function useBangladeshTime() {
     setCurrentTime(now.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Dhaka'
+      hour12: true
     }));
     
     setCurrentDate(now.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long', 
-      day: 'numeric',
-      timeZone: 'Asia/Dhaka'
+      day: 'numeric'
     }));
   };
 

@@ -12,14 +12,15 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
   // Use Bangladesh time for calendar display  
   const getBangladeshDate = () => {
     const now = new Date();
-    const bangladeshTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    // Add 6 hours to UTC time for Bangladesh time (UTC+6)
+    const bangladeshTime = new Date(now.getTime() + (6 * 60 * 60 * 1000));
     return bangladeshTime;
   };
   
   const [currentDate, setCurrentDate] = useState(() => {
     const bdTime = getBangladeshDate();
     // Set to first day of current month in Bangladesh time
-    return new Date(bdTime.getFullYear(), bdTime.getMonth(), 1);
+    return new Date(bdTime.getUTCFullYear(), bdTime.getUTCMonth(), 1);
   });
 
   // Update calendar when date changes (especially at midnight)
@@ -27,12 +28,12 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
     const updateCalendar = () => {
       const bdTime = getBangladeshDate();
       const currentMonthYear = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const bangladeshMonthYear = new Date(bdTime.getFullYear(), bdTime.getMonth(), 1);
+      const bangladeshMonthYear = new Date(bdTime.getUTCFullYear(), bdTime.getUTCMonth(), 1);
       
       // If we're viewing the current month but the month has changed in Bangladesh time
       if (currentMonthYear.getTime() !== bangladeshMonthYear.getTime() && 
-          currentDate.getFullYear() === bdTime.getFullYear() && 
-          Math.abs(currentDate.getMonth() - bdTime.getMonth()) <= 1) {
+          currentDate.getFullYear() === bdTime.getUTCFullYear() && 
+          Math.abs(currentDate.getMonth() - bdTime.getUTCMonth()) <= 1) {
         setCurrentDate(bangladeshMonthYear);
       }
     };
@@ -61,8 +62,8 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
   // Calculate days remaining in current month
   const getDaysRemainingInMonth = () => {
     const now = getBangladeshDate();
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    const daysRemaining = lastDayOfMonth.getDate() - now.getDate();
+    const lastDayOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0));
+    const daysRemaining = lastDayOfMonth.getUTCDate() - now.getUTCDate();
     return daysRemaining;
   };
 
@@ -118,14 +119,13 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
           <h2 className="text-lg font-semibold">Activity Calendar</h2>
           <div className="flex items-center mt-1 text-sm text-accent">
             <Calendar className="w-4 h-4 mr-1" />
-            <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getMonth()]}</span>
+            <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getUTCMonth()]}</span>
           </div>
           <div className="text-xs text-muted mt-1">
             Bangladesh Date: {getBangladeshDate().toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
-              day: 'numeric',
-              timeZone: 'Asia/Dhaka'
+              day: 'numeric'
             })}
           </div>
         </div>
