@@ -1,0 +1,42 @@
+Android App Prompt: Self-Discipline & Habit Tracker
+App Name
+HyperSonic
+Core Concept
+The app is a self-discipline and habit-building tool with a distinctive visual interface centered around a hexagonal progress system. Its primary functions are:
+ * Daily goal setting and tracking.
+ * Long-term habit creation and management.
+ * A dedicated module for managing urges, specifically for breaking the habit of masturbation.
+ * A calendar to visualize progress over time.
+Visual and Interface
+The app should have a fancy, modern, and clean interface. A core visual element is a hexagon that represents the user's overall progress, which will fill up or change color as the user completes tasks and habits. The UI should be intuitive and aesthetically pleasing.
+Key Features
+1. Daily Goals
+ * Users can set a list of goals for the day.
+ * Each goal is a simple checkbox that can be marked as complete.
+ * A goal progress counter should be displayed on the main screen, showing how many daily goals have been completed (e.g., "3/5 goals completed").
+ * At 12:00 AM (midnight), all daily goals should automatically reset.
+2. Habit Tracker
+ * Users can create custom habits (e.g., "Read 10 pages," "Go for a 15-minute run," "Meditate").
+ * Habits are a bit different from daily goals. When a user creates a habit, it should be marked as "Active."
+ * If a user completes a habit for a certain number of consecutive days, it "levels up" or gets a visual reward within the app.
+ * If a user fails to complete a habit for a specified number of consecutive days, that habit is automatically canceled or marked as "Failed." The user would then need to restart the habit.
+3. Urge Breaker
+ * This is a dedicated feature designed to help users manage the urge to masturbate.
+ * The main screen should have a prominent button that says "Urge Breaker" or something similar.
+ * When the user clicks this button, a new screen appears with a list of pre-defined tasks (e.g., "Do 20 push-ups," "Take a cold shower," "Listen to a podcast," "Go for a quick walk").
+ * The user can choose one of these tasks to distract themselves.
+ * Completing an urge-breaking task should also contribute to their overall hexagon progress.
+4. Calendar & Activity Log
+ * The app will include a calendar view.
+ * Each day on the calendar should be marked to reflect the user's activity. For example, a color or symbol could indicate a day with high activity (many goals/habits completed), low activity, or a day when the user used the urge-breaker feature.
+ * This feature helps users visualize their discipline streak and see their progress over weeks and months.
+5. Data and Storage
+ * All user data must be saved locally on the device.
+ * The app should not rely on any external databases or require an internet connection.
+ * This ensures privacy and allows the app to function anywhere.
+ * The app should be able to function offline.
+6. Hexagon Progress
+ * This is the central visual element on the main screen.
+ * The hexagon's progress bar or segments should fill up based on the user's activity (completed goals, habits, and urge-breaking tasks).
+ * The hexagon can serve as a quick, at-a-glance visualization of the user's overall discipline for the day.
+The name HyperSonic adds a sense of speed and progress, which fits perfectly with the app's goals. This prompt is now ready to be used.
