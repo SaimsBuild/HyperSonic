@@ -79,9 +79,6 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
     const days = [];
     const today = getTodayDateString();
     
-    // Debug: log the today date to console
-    console.log('Calendar today date:', today);
-    
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
@@ -96,16 +93,6 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       const isToday = dateStr === today;
       const activity = activityLog[dateStr];
       
-      // Debug: log when we find today's date
-      if (isToday) {
-        console.log('Found today in calendar:', dateStr, 'matches', today);
-      }
-      
-      // Debug: log any activity data
-      if (activity) {
-        console.log(`Activity found for ${dateStr}:`, activity);
-      }
-      
       let activityClass = '';
       if (activity) {
         if (activity.level === 3) activityClass = 'high-activity';
@@ -113,19 +100,12 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
         else if (activity.level === 1) activityClass = 'low-activity';
       }
       
-      // Debug: log the classes being applied
-      const finalClasses = `calendar-day text-sm text-white ${
-        isCurrentMonth ? '' : 'opacity-50'
-      } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`;
-      
-      if (date.getDate() === 10 || date.getDate() === 11) {
-        console.log(`Date ${date.getDate()}: dateStr="${dateStr}", today="${today}", isToday=${isToday}, activity=${activity?.level || 'none'}`);
-      }
-      
       days.push(
         <div
           key={dateStr}
-          className={finalClasses}
+          className={`calendar-day text-sm text-white ${
+            isCurrentMonth ? '' : 'opacity-50'
+          } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`}
         >
           {date.getDate()}
         </div>
