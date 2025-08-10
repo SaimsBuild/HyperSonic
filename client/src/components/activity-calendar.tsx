@@ -79,6 +79,9 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
     const days = [];
     const today = getTodayDateString();
     
+    // Debug: log the today date to console
+    console.log('Calendar today date:', today);
+    
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
@@ -87,6 +90,11 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       const isCurrentMonth = date.getMonth() === month;
       const isToday = dateStr === today;
       const activity = activityLog[dateStr];
+      
+      // Debug: log when we find today's date
+      if (isToday) {
+        console.log('Found today in calendar:', dateStr, 'matches', today);
+      }
       
       let activityClass = '';
       if (activity) {
