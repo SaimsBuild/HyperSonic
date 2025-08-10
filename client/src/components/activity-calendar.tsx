@@ -1,0 +1,127 @@
+import { useState } from 'react';
+import { ActivityLogEntry } from '@shared/schema';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+interface ActivityCalendarProps {
+  activityLog: Record<string, ActivityLogEntry>;
+  getTodayDateString: () => string;
+}
+
+export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCalendarProps) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const previousMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+
+  const renderCalendar = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days = [];
+    const today = getTodayDateString();
+    
+    for (let i = 0; i < 42; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      
+      const dateStr = date.toISOString().split('T')[0];
+      const isCurrentMonth = date.getMonth() === month;
+      const isToday = dateStr === today;
+      const activity = activityLog[dateStr];
+      
+      let activityClass = '';
+      if (activity) {
+        if (activity.level === 3) activityClass = 'high-activity';
+        else if (activity.level === 2) activityClass = 'medium-activity';
+        else if (activity.level === 1) activityClass = 'low-activity';
+      }
+      
+      days.push(
+        <div
+          key={dateStr}
+          className={`calendar-day text-sm ${
+            isCurrentMonth ? '' : 'text-muted opacity-50'
+          } ${isToday ? 'today ring-2 ring-primary' : ''} ${activityClass}`}
+        >
+          {date.getDate()}
+        </div>
+      );
+    }
+    
+    return days;
+  };
+
+  return (
+    <div className="bg-surface rounded-xl p-6 border border-slate-700">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold">Activity Calendar</h2>
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={previousMonth}
+            variant="ghost"
+            size="sm"
+            className="p-2 hover:bg-slate-700 text-white"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <span className="text-sm font-medium px-3">
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </span>
+          <Button
+            onClick={nextMonth}
+            variant="ghost"
+            size="sm"
+            className="p-2 hover:bg-slate-700 text-white"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 mb-4">
+        {dayNames.map(day => (
+          <div key={day} className="text-center text-sm font-medium text-muted py-2">
+            {day}
+          </div>
+        ))}
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 mb-4">
+        {renderCalendar()}
+      </div>
+      
+      <div className="flex items-center justify-center space-x-4 text-xs">
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-gradient-to-r from-secondary to-green-600 rounded mr-2"></div>
+          <span className="text-muted">High Activity</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-gradient-to-r from-accent to-yellow-600 rounded mr-2"></div>
+          <span className="text-muted">Medium Activity</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-gradient-to-r from-muted to-slate-600 rounded mr-2"></div>
+          <span className="text-muted">Low Activity</span>
+        </div>
+      </div>
+    </div>
+  );
+}
