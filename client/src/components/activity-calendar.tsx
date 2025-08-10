@@ -169,7 +169,7 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       
       <div className="grid grid-cols-7 gap-1 mb-4">
         {dayNames.map(day => (
-          <div key={day} className="text-center text-sm font-medium text-muted py-2">
+          <div key={day} className="text-center text-sm font-medium text-white py-2">
             {day}
           </div>
         ))}
@@ -182,15 +182,15 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
       <div className="flex items-center justify-center space-x-4 text-xs">
         <div className="flex items-center">
           <div className="w-3 h-3 bg-gradient-to-r from-secondary to-green-600 rounded mr-2"></div>
-          <span className="text-muted">High Activity</span>
+          <span className="text-white">High Activity</span>
         </div>
         <div className="flex items-center">
           <div className="w-3 h-3 bg-gradient-to-r from-accent to-yellow-600 rounded mr-2"></div>
-          <span className="text-muted">Medium Activity</span>
+          <span className="text-white">Medium Activity</span>
         </div>
         <div className="flex items-center">
           <div className="w-3 h-3 bg-gradient-to-r from-muted to-slate-600 rounded mr-2"></div>
-          <span className="text-muted">Low Activity</span>
+          <span className="text-white">Low Activity</span>
         </div>
       </div>
     </div>
