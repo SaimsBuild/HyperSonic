@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ActivityLogEntry } from '@shared/schema';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,12 +9,37 @@ interface ActivityCalendarProps {
 }
 
 export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCalendarProps) {
-  // Use Bangladesh time for calendar display
+  // Use Bangladesh time for calendar display  
   const getBangladeshDate = () => {
-    return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    const now = new Date();
+    const bangladeshTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    return bangladeshTime;
   };
   
-  const [currentDate, setCurrentDate] = useState(getBangladeshDate());
+  const [currentDate, setCurrentDate] = useState(() => {
+    const bdTime = getBangladeshDate();
+    // Set to first day of current month in Bangladesh time
+    return new Date(bdTime.getFullYear(), bdTime.getMonth(), 1);
+  });
+
+  // Update calendar when date changes (especially at midnight)
+  useEffect(() => {
+    const updateCalendar = () => {
+      const bdTime = getBangladeshDate();
+      const currentMonthYear = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const bangladeshMonthYear = new Date(bdTime.getFullYear(), bdTime.getMonth(), 1);
+      
+      // If we're viewing the current month but the month has changed in Bangladesh time
+      if (currentMonthYear.getTime() !== bangladeshMonthYear.getTime() && 
+          currentDate.getFullYear() === bdTime.getFullYear() && 
+          Math.abs(currentDate.getMonth() - bdTime.getMonth()) <= 1) {
+        setCurrentDate(bangladeshMonthYear);
+      }
+    };
+
+    const interval = setInterval(updateCalendar, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [currentDate, getBangladeshDate]);
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -95,6 +120,14 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
             <Calendar className="w-4 h-4 mr-1" />
             <span className="font-medium">{daysRemaining} days left in {monthNames[getBangladeshDate().getMonth()]}</span>
           </div>
+          <div className="text-xs text-muted mt-1">
+            Bangladesh Date: {getBangladeshDate().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              timeZone: 'Asia/Dhaka'
+            })}
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -115,6 +148,21 @@ export function ActivityCalendar({ activityLog, getTodayDateString }: ActivityCa
             className="p-2 hover:bg-slate-700 text-white"
           >
             <ChevronRight className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={() => {
+              // Test: simulate next day in Bangladesh
+              const bdTime = getBangladeshDate();
+              const nextDay = new Date(bdTime);
+              nextDay.setDate(nextDay.getDate() + 1);
+              setCurrentDate(new Date(nextDay.getFullYear(), nextDay.getMonth(), 1));
+            }}
+            variant="ghost"
+            size="sm"
+            className="p-2 hover:bg-slate-700 text-yellow-400"
+            title="Test: Simulate Next Day"
+          >
+            +1D
           </Button>
         </div>
       </div>
