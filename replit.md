@@ -85,3 +85,19 @@ Preferred communication style: Simple, everyday language.
 - **express**: Web framework for potential API endpoints
 - **tsx**: TypeScript execution for server-side code
 - The backend structure is minimal and primarily serves static files, with storage interface prepared for future database integration
+
+## Deployment
+
+### Vercel Deployment
+The application is configured for easy deployment to Vercel as a static site:
+- **Configuration**: `vercel.json` specifies build command and output directory
+- **Build Command**: `vite build` generates static files
+- **Output Directory**: `dist/public` contains the production build
+- **Optimization**: `.vercelignore` excludes unnecessary files from deployment
+- **Documentation**: See `VERCEL_DEPLOYMENT.md` for step-by-step deployment instructions
+
+### User Data Privacy
+- All user data is stored in browser localStorage
+- Each user's data is completely private and never leaves their browser
+- No backend database required for deployment
+- Users can access their data only on the specific browser/device where they created it
