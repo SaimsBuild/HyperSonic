@@ -318,14 +318,14 @@ export default function Dashboard() {
       <footer className="bg-surface border-t border-slate-700 mt-12">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-muted">
+            <div className="text-sm text-white">
               Built by <span className="text-primary font-semibold">Saim</span>
             </div>
             <a
               href="https://www.facebook.com/tanvirahmedsaim"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors"
+              className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors"
               data-testid="link-facebook-contact"
             >
               <SiFacebook className="w-5 h-5" />
