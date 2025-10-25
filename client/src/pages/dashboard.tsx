@@ -22,7 +22,13 @@ export default function Dashboard() {
   const { currentTime, currentDate, getTodayDateString, getTimeUntilMidnight } = useBangladeshTime();
   const [appData, setAppData] = useLocalStorage<AppData>('hypersonic-data', initialAppData);
   const [showUrgeBreaker, setShowUrgeBreaker] = useState(false);
-  const { permission, requestPermission, isSupported } = useNotifications();
+  const { permission, requestPermission, isSupported, isLoading } = useNotifications();
+
+  useEffect(() => {
+    if (isSupported && permission === 'default' && !isLoading) {
+      requestPermission();
+    }
+  }, [isSupported, permission, isLoading]);
 
   // Check for daily reset at midnight Bangladesh time
   useEffect(() => {

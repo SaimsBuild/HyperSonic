@@ -1,37 +1,46 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type PushSubscription, type InsertPushSubscription } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getAllSubscriptions(): Promise<PushSubscription[]>;
+  getSubscription(endpoint: string): Promise<PushSubscription | undefined>;
+  createSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+  deleteSubscription(endpoint: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private subscriptions: Map<string, PushSubscription>;
 
   constructor() {
-    this.users = new Map();
+    this.subscriptions = new Map();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getAllSubscriptions(): Promise<PushSubscription[]> {
+    return Array.from(this.subscriptions.values());
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getSubscription(endpoint: string): Promise<PushSubscription | undefined> {
+    return this.subscriptions.get(endpoint);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createSubscription(insertSubscription: InsertPushSubscription): Promise<PushSubscription> {
+    const existing = this.subscriptions.get(insertSubscription.endpoint);
+    if (existing) {
+      return existing;
+    }
+
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const subscription: PushSubscription = {
+      ...insertSubscription,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.subscriptions.set(insertSubscription.endpoint, subscription);
+    return subscription;
+  }
+
+  async deleteSubscription(endpoint: string): Promise<boolean> {
+    return this.subscriptions.delete(endpoint);
   }
 }
 
