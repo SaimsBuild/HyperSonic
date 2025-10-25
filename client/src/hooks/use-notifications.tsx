@@ -36,16 +36,6 @@ export function useNotifications() {
       });
       
       return notification;
-    } else if (Notification.permission === 'default') {
-      requestPermission().then((result) => {
-        if (result === 'granted') {
-          new Notification(title, {
-            icon: '/favicon.ico',
-            badge: '/favicon.ico',
-            ...options,
-          });
-        }
-      });
     }
     
     return null;

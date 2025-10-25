@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useBangladeshTime } from '@/hooks/use-bangladesh-time';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useNotifications } from '@/hooks/use-notifications';
 import { AppData, DailyGoal, Habit } from '@shared/schema';
 import { HexagonProgress } from '@/components/hexagon-progress';
 import { DailyGoals } from '@/components/daily-goals';
 import { HabitTracker } from '@/components/habit-tracker';
 import { ActivityCalendar } from '@/components/activity-calendar';
 import { UrgeBreaker } from '@/components/urge-breaker';
-import { Zap, RotateCcw } from 'lucide-react';
+import { NotificationMonitor } from '@/components/notification-monitor';
+import { Zap, RotateCcw, Bell, BellOff } from 'lucide-react';
 
 const initialAppData: AppData = {
   dailyGoals: [],
@@ -20,6 +22,7 @@ export default function Dashboard() {
   const { currentTime, currentDate, getTodayDateString, getTimeUntilMidnight } = useBangladeshTime();
   const [appData, setAppData] = useLocalStorage<AppData>('hypersonic-data', initialAppData);
   const [showUrgeBreaker, setShowUrgeBreaker] = useState(false);
+  const { permission, requestPermission, isSupported } = useNotifications();
 
   // Check for daily reset at midnight Bangladesh time
   useEffect(() => {
@@ -215,6 +218,7 @@ export default function Dashboard() {
             <div 
               className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-6 border border-red-500 cursor-pointer hover:from-red-700 hover:to-red-800 transition-all"
               onClick={() => setShowUrgeBreaker(true)}
+              data-testid="button-urge-breaker"
             >
               <div className="text-center">
                 <div className="text-3xl mb-2">🛡️</div>
@@ -222,6 +226,47 @@ export default function Dashboard() {
                 <p className="text-sm text-red-100">Need help staying disciplined?</p>
               </div>
             </div>
+
+            {/* Notification Enable Button */}
+            {isSupported && permission !== 'granted' && (
+              <div 
+                className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 border border-blue-500 cursor-pointer hover:from-blue-700 hover:to-blue-800 transition-all"
+                onClick={requestPermission}
+                data-testid="button-enable-notifications"
+              >
+                <div className="text-center">
+                  <Bell className="w-8 h-8 mx-auto mb-2 text-white" />
+                  <h3 className="text-lg font-semibold text-white">Enable Notifications</h3>
+                  <p className="text-sm text-blue-100">Get alerts for habits & goals</p>
+                </div>
+              </div>
+            )}
+
+            {/* Notification Status */}
+            {isSupported && permission === 'granted' && (
+              <div 
+                className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-4 border border-green-500"
+                data-testid="status-notifications-enabled"
+              >
+                <div className="text-center">
+                  <Bell className="w-6 h-6 mx-auto mb-1 text-white" />
+                  <p className="text-sm text-green-100">Notifications Enabled</p>
+                </div>
+              </div>
+            )}
+
+            {isSupported && permission === 'denied' && (
+              <div 
+                className="bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-4 border border-gray-500"
+                data-testid="status-notifications-denied"
+              >
+                <div className="text-center">
+                  <BellOff className="w-6 h-6 mx-auto mb-1 text-white" />
+                  <p className="text-sm text-gray-100">Notifications Blocked</p>
+                  <p className="text-xs text-gray-300 mt-1">Enable in browser settings</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Middle Column: Habits & Calendar */}
@@ -293,6 +338,14 @@ export default function Dashboard() {
           }));
           setShowUrgeBreaker(false);
         }}
+      />
+
+      {/* Notification Monitor */}
+      <NotificationMonitor
+        appData={appData}
+        getTodayDateString={getTodayDateString}
+        getTimeUntilMidnight={getTimeUntilMidnight}
+        isNotificationEnabled={isSupported && permission === 'granted'}
       />
     </div>
   );

@@ -1,19 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { AppData, Habit } from '@shared/schema';
-import { useNotifications } from '@/hooks/use-notifications';
 
 interface NotificationMonitorProps {
   appData: AppData;
   getTodayDateString: () => string;
   getTimeUntilMidnight: () => { hours: number; minutes: number };
+  isNotificationEnabled: boolean;
 }
 
 export function NotificationMonitor({ 
   appData, 
   getTodayDateString,
-  getTimeUntilMidnight 
+  getTimeUntilMidnight,
+  isNotificationEnabled
 }: NotificationMonitorProps) {
-  const { sendNotification, permission } = useNotifications();
   const notifiedHabitsRef = useRef<Set<string>>(new Set());
   const notifiedGoalsRef = useRef<boolean>(false);
   const lastCheckDateRef = useRef<string>('');
@@ -27,7 +27,7 @@ export function NotificationMonitor({
       lastCheckDateRef.current = today;
     }
 
-    if (permission !== 'granted') {
+    if (!isNotificationEnabled) {
       return;
     }
 
@@ -40,7 +40,17 @@ export function NotificationMonitor({
     checkGoalProgress();
 
     return () => clearInterval(checkInterval);
-  }, [appData, permission, getTodayDateString, getTimeUntilMidnight]);
+  }, [appData, isNotificationEnabled, getTodayDateString, getTimeUntilMidnight]);
+
+  const sendBrowserNotification = (title: string, options?: NotificationOptions) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        ...options,
+      });
+    }
+  };
 
   const checkHabitBreaking = () => {
     const today = getTodayDateString();
@@ -52,7 +62,7 @@ export function NotificationMonitor({
       const habitCompletedToday = habit.lastCompleted === today;
       
       if (!habitCompletedToday && hours <= 6 && !notifiedHabitsRef.current.has(habit.id)) {
-        sendNotification('⚠️ Habit at Risk!', {
+        sendBrowserNotification('⚠️ Habit at Risk!', {
           body: `"${habit.name}" hasn't been completed yet. Complete it before midnight to maintain your ${habit.streak}-day streak!`,
           tag: `habit-${habit.id}`,
           requireInteraction: false,
@@ -74,7 +84,7 @@ export function NotificationMonitor({
         const progress = (completedGoals / totalGoals) * 100;
         
         if (progress < 50) {
-          sendNotification('📊 Goals Behind Schedule!', {
+          sendBrowserNotification('📊 Goals Behind Schedule!', {
             body: `You've only completed ${Math.round(progress)}% of your daily goals with ${hours} hours left. Time to catch up!`,
             tag: 'goals-progress',
             requireInteraction: false,
