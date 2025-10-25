@@ -9,7 +9,7 @@ import { HabitTracker } from '@/components/habit-tracker';
 import { ActivityCalendar } from '@/components/activity-calendar';
 import { UrgeBreaker } from '@/components/urge-breaker';
 import { NotificationMonitor } from '@/components/notification-monitor';
-import { Zap, RotateCcw, Bell, BellOff } from 'lucide-react';
+import { Zap, RotateCcw } from 'lucide-react';
 
 const initialAppData: AppData = {
   dailyGoals: [],
@@ -232,47 +232,6 @@ export default function Dashboard() {
                 <p className="text-sm text-red-100">Need help staying disciplined?</p>
               </div>
             </div>
-
-            {/* Notification Enable Button */}
-            {isSupported && permission !== 'granted' && (
-              <div 
-                className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 border border-blue-500 cursor-pointer hover:from-blue-700 hover:to-blue-800 transition-all"
-                onClick={requestPermission}
-                data-testid="button-enable-notifications"
-              >
-                <div className="text-center">
-                  <Bell className="w-8 h-8 mx-auto mb-2 text-white" />
-                  <h3 className="text-lg font-semibold text-white">Enable Notifications</h3>
-                  <p className="text-sm text-blue-100">Get alerts for habits & goals</p>
-                </div>
-              </div>
-            )}
-
-            {/* Notification Status */}
-            {isSupported && permission === 'granted' && (
-              <div 
-                className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-4 border border-green-500"
-                data-testid="status-notifications-enabled"
-              >
-                <div className="text-center">
-                  <Bell className="w-6 h-6 mx-auto mb-1 text-white" />
-                  <p className="text-sm text-green-100">Notifications Enabled</p>
-                </div>
-              </div>
-            )}
-
-            {isSupported && permission === 'denied' && (
-              <div 
-                className="bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-4 border border-gray-500"
-                data-testid="status-notifications-denied"
-              >
-                <div className="text-center">
-                  <BellOff className="w-6 h-6 mx-auto mb-1 text-white" />
-                  <p className="text-sm text-gray-100">Notifications Blocked</p>
-                  <p className="text-xs text-gray-300 mt-1">Enable in browser settings</p>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Middle Column: Habits & Calendar */}
