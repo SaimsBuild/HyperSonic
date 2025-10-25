@@ -10,6 +10,7 @@ import { ActivityCalendar } from '@/components/activity-calendar';
 import { UrgeBreaker } from '@/components/urge-breaker';
 import { NotificationMonitor } from '@/components/notification-monitor';
 import { Zap, RotateCcw } from 'lucide-react';
+import { SiFacebook } from 'react-icons/si';
 
 const initialAppData: AppData = {
   dailyGoals: [],
@@ -312,6 +313,27 @@ export default function Dashboard() {
         getTimeUntilMidnight={getTimeUntilMidnight}
         isNotificationEnabled={isSupported && permission === 'granted'}
       />
+
+      {/* Footer */}
+      <footer className="bg-surface border-t border-slate-700 mt-12">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-muted">
+              Built by <span className="text-primary font-semibold">Saim</span>
+            </div>
+            <a
+              href="https://www.facebook.com/tanvirahmedsaim"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors"
+              data-testid="link-facebook-contact"
+            >
+              <SiFacebook className="w-5 h-5" />
+              <span>Contact Us on Facebook</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
