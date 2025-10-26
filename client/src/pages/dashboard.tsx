@@ -38,17 +38,12 @@ export default function Dashboard() {
       
       if (appData.lastResetDate !== today) {
         console.log(`Daily reset triggered: ${appData.lastResetDate} -> ${today}`);
-        console.log(`Resetting ${appData.dailyGoals.length} goals and making habit tick marks available again`);
+        console.log(`Removing all ${appData.dailyGoals.length} daily goals and making habit tick marks available again`);
         
-        // Reset daily goals by clearing completed status
-        const resetGoals = appData.dailyGoals.map(goal => ({
-          ...goal,
-          completed: false
-        }));
-        
+        // Remove all daily goals at midnight
         setAppData(prev => ({
           ...prev,
-          dailyGoals: resetGoals,
+          dailyGoals: [],
           lastResetDate: today
         }));
       }
@@ -69,11 +64,23 @@ export default function Dashboard() {
     const totalGoals = appData.dailyGoals.length;
     const today = getTodayDateString();
     const completedHabits = appData.habits.filter(habit => habit.lastCompleted === today).length;
+    const totalHabits = appData.habits.length;
     
-    const goalProgress = totalGoals > 0 ? (completedGoals / totalGoals) * 60 : 0;
-    const habitProgress = appData.habits.length > 0 ? (completedHabits / appData.habits.length) * 40 : 0;
+    // Smart progress calculation based on what the user has set up
+    let totalProgress = 0;
     
-    const totalProgress = Math.min(goalProgress + habitProgress, 100);
+    if (totalGoals > 0 && totalHabits > 0) {
+      // Both goals and habits exist: 60% for goals, 40% for habits
+      const goalProgress = (completedGoals / totalGoals) * 60;
+      const habitProgress = (completedHabits / totalHabits) * 40;
+      totalProgress = goalProgress + habitProgress;
+    } else if (totalGoals > 0) {
+      // Only goals exist: goals count as 100%
+      totalProgress = (completedGoals / totalGoals) * 100;
+    } else if (totalHabits > 0) {
+      // Only habits exist: habits count as 100%
+      totalProgress = (completedHabits / totalHabits) * 100;
+    }
     
     return {
       totalProgress: Math.round(totalProgress),
@@ -159,21 +166,18 @@ export default function Dashboard() {
             </div>
             <button
               onClick={() => {
-                // Manual reset for testing
+                // Manual reset for testing - matches midnight behavior
                 const today = getTodayDateString();
-                const resetGoals = appData.dailyGoals.map(goal => ({
-                  ...goal,
-                  completed: false
-                }));
                 setAppData(prev => ({
                   ...prev,
-                  dailyGoals: resetGoals,
+                  dailyGoals: [],
                   lastResetDate: today
                 }));
-                console.log('Manual reset triggered');
+                console.log('Manual reset triggered - all goals removed');
               }}
               className="p-2 text-muted hover:text-accent transition-colors"
               title="Test Reset Goals"
+              data-testid="button-manual-reset"
             >
               <RotateCcw className="w-4 h-4" />
             </button>

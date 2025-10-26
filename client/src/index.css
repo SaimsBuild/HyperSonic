@@ -70,20 +70,38 @@
 
 /* Custom Hexagon Styles */
 .hexagon {
-  width: 200px;
-  height: 173px;
+  width: 220px;
+  height: 220px;
   position: relative;
   margin: 0 auto;
+  filter: drop-shadow(0 0 30px hsla(248.3, 87.6%, 67.1%, 0.3));
 }
 
 .hexagon-inner {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, hsl(248.3, 87.6%, 67.1%), hsl(277, 85%, 72%));
-  border-radius: 20px;
-  transform: rotate(30deg);
+  border-radius: 50%;
   position: relative;
   overflow: hidden;
+  box-shadow: 
+    0 0 40px hsla(248.3, 87.6%, 67.1%, 0.4),
+    inset 0 0 60px hsla(0, 0%, 100%, 0.1);
+  animation: hexagonPulse 3s ease-in-out infinite;
+  border: 2px solid hsla(248.3, 87.6%, 77.1%, 0.3);
+}
+
+@keyframes hexagonPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 40px hsla(248.3, 87.6%, 67.1%, 0.4),
+      inset 0 0 60px hsla(0, 0%, 100%, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 60px hsla(248.3, 87.6%, 67.1%, 0.6),
+      inset 0 0 80px hsla(0, 0%, 100%, 0.15);
+  }
 }
 
 .hexagon-progress {
@@ -91,19 +109,50 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, hsl(159.8, 100%, 36.1%), hsl(159.8, 100%, 26.1%));
-  transition: height 0.5s ease-in-out;
-  border-radius: 0 0 20px 20px;
+  background: linear-gradient(180deg, 
+    hsla(159.8, 100%, 46.1%, 0.9), 
+    hsl(159.8, 100%, 36.1%), 
+    hsl(159.8, 100%, 26.1%));
+  transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 0 50% 50%;
+  box-shadow: 0 -10px 30px hsla(159.8, 100%, 36.1%, 0.5);
+}
+
+.hexagon-inner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    hsla(248.3, 87.6%, 87.1%, 0.1),
+    transparent
+  );
+  animation: hexagonShimmer 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes hexagonShimmer {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .hexagon-content {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-30deg);
+  transform: translate(-50%, -50%);
   text-align: center;
   color: white;
   z-index: 10;
+  text-shadow: 0 2px 10px hsla(0, 0%, 0%, 0.5);
 }
 
 /* Calendar Styles */
